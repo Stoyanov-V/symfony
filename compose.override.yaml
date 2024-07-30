@@ -15,6 +15,7 @@ services:
       MERCURE_EXTRA_DIRECTIVES: demo
       # See https://xdebug.org/docs/all_settings#mode
       XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+      PHP_IDE_CONFIG: 'serverName=docker'
     extra_hosts:
       # Ensure that host.docker.internal is correctly defined on Linux
       - host.docker.internal:host-gateway
@@ -25,7 +26,8 @@ services:
 
 ###> doctrine/doctrine-bundle ###
   database:
-    env_file: ".env.local"
+    env_file:
+      - .env.local
     ports:
       - ${POSTGRES_PORT:-5432}:5432
 ###< doctrine/doctrine-bundle ###
