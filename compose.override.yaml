@@ -22,3 +22,10 @@ services:
 
 ###> symfony/mercure-bundle ###
 ###< symfony/mercure-bundle ###
+
+###> doctrine/doctrine-bundle ###
+  database:
+    env_file: ".env.local"
+    ports:
+      - ${POSTGRES_PORT:-5432}:5432
+###< doctrine/doctrine-bundle ###
