@@ -26,6 +26,9 @@ up: ## Start the docker hub in detached mode (no logs)
 
 start: build up ## Build and start the containers
 
+local: ## Start docker with local env
+	@$(DOCKER_COMP) --env-file=.env.local up --pull always -d --wait
+
 down: ## Stop the docker hub
 	@$(DOCKER_COMP) down --remove-orphans
 
@@ -41,6 +44,9 @@ bash: ## Connect to the FrankenPHP container via bash so up and down arrows go t
 test: ## Start tests with phpunit, pass the parameter "c=" to add options to phpunit, example: make test c="--group e2e --stop-on-failure"
 	@$(eval c ?=)
 	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit $(c)
+
+chown: ## Edit Permissions on Linux
+	@$(DOCKER_COMP) run --rm php chown -R $(id -u):$(id -g) .
 
 
 ## —— Composer 🧙 ——————————————————————————————————————————————————————————————
