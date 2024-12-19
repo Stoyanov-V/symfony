@@ -20,14 +20,28 @@ services:
       # Ensure that host.docker.internal is correctly defined on Linux
       - host.docker.internal:host-gateway
     tty: true
+    networks:
+      - app
+    depends_on:
+      database:
+        condition: service_healthy
+        restart: true
 
 ###> symfony/mercure-bundle ###
 ###< symfony/mercure-bundle ###
 
 ###> doctrine/doctrine-bundle ###
   database:
+    container_name: database
+    restart: always
     env_file:
       - .env.local
+    networks:
+      - app
     ports:
       - ${POSTGRES_PORT:-5432}:5432
 ###< doctrine/doctrine-bundle ###
+
+networks:
+  app:
+    driver: bridge

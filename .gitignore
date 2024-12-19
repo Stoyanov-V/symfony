@@ -69,3 +69,8 @@
 ###> phpstan/phpstan ###
 phpstan.neon
 ###< phpstan/phpstan ###
+
+
+###> docker folder ###
+/docker/
+###< docker folder ###
