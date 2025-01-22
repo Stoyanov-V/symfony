@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use SensitiveParameter;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
@@ -27,6 +30,17 @@ class User
 
     #[ORM\Column(type: 'string')]
     private string $password;
+
+    /**
+     * @var Collection<int, Restaurant>
+     */
+    #[ORM\ManyToMany(targetEntity: Restaurant::class, mappedBy: 'users')]
+    private Collection $restaurants;
+
+    public function __construct()
+    {
+        $this->restaurants = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -77,9 +91,36 @@ class User
         return $this->password;
     }
 
-    public function setPassword(#[\SensitiveParameter] string $password): User
+    public function setPassword(#[SensitiveParameter] string $password): User
     {
         $this->password = $password;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Restaurant>
+     */
+    public function getRestaurants(): Collection
+    {
+        return $this->restaurants;
+    }
+
+    public function addRestaurant(Restaurant $restaurant): static
+    {
+        if (!$this->restaurants->contains($restaurant)) {
+            $this->restaurants->add($restaurant);
+            $restaurant->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRestaurant(Restaurant $restaurant): static
+    {
+        if ($this->restaurants->removeElement($restaurant)) {
+            $restaurant->removeUser($this);
+        }
+
         return $this;
     }
 
