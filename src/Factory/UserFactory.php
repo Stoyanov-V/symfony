@@ -6,10 +6,10 @@ namespace App\Factory;
 
 use App\Entity\User;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+use function Zenstruck\Foundry\lazy;
 
 /**
- * @template T of object
- * @extends PersistentProxyObjectFactory <T>
+ * @extends PersistentProxyObjectFactory<User>
  */
 final class UserFactory extends PersistentProxyObjectFactory
 {
@@ -25,10 +25,11 @@ final class UserFactory extends PersistentProxyObjectFactory
     protected function defaults(): array
     {
         return [
-            'email' => self::faker()->email(),
+            'email' => self::faker()->unique()->email(),
             'firstName' => self::faker()->firstName(),
             'lastName' => self::faker()->lastName(),
             'password' => self::faker()->password(),
+            'restaurants' => lazy(fn() => RestaurantFactory::randomRange(1,3))
         ];
     }
 
