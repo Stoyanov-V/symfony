@@ -24,9 +24,23 @@ class Restaurant
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'restaurants')]
     private Collection $users;
 
+    /**
+     * @var Collection<int, Category>
+     */
+    #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'restaurant')]
+    private Collection $categories;
+
+    /**
+     * @var Collection<int, Item>
+     */
+    #[ORM\OneToMany(targetEntity: Item::class, mappedBy: 'restaurant', orphanRemoval: true)]
+    private Collection $items;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->categories = new ArrayCollection();
+        $this->items = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -34,7 +48,7 @@ class Restaurant
         return $this->id;
     }
 
-    public function git(?int $id): Restaurant
+    public function setId(?int $id): Restaurant
     {
         $this->id = $id;
         return $this;
@@ -72,6 +86,66 @@ class Restaurant
     public function removeUser(User $user): static
     {
         $this->users->removeElement($user);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(Category $category): static
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->setRestaurant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): static
+    {
+        if ($this->categories->removeElement($category)) {
+            // set the owning side to null (unless already changed)
+            if ($category->getRestaurant() === $this) {
+                $category->setRestaurant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Item>
+     */
+    public function getItems(): Collection
+    {
+        return $this->items;
+    }
+
+    public function addItem(Item $item): static
+    {
+        if (!$this->items->contains($item)) {
+            $this->items->add($item);
+            $item->setRestaurant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeItem(Item $item): static
+    {
+        if ($this->items->removeElement($item)) {
+            // set the owning side to null (unless already changed)
+            if ($item->getRestaurant() === $this) {
+                $item->setRestaurant(null);
+            }
+        }
 
         return $this;
     }

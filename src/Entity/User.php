@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use SensitiveParameter;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
@@ -17,16 +18,17 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['user:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Groups(['user:read'])]
     private string $email;
 
     #[ORM\Column(type: 'string')]
-    private string $firstName;
+    #[Groups(['user:read'])]
+    private string $name;
 
-    #[ORM\Column(type: 'string')]
-    private string $lastName;
 
     #[ORM\Column(type: 'string')]
     private string $password;
@@ -64,25 +66,14 @@ class User
         return $this;
     }
 
-    public function getFirstName(): string
+    public function getName(): string
     {
-        return $this->firstName;
+        return $this->name;
     }
 
-    public function setFirstName(string $firstName): User
+    public function setName(string $name): User
     {
-        $this->firstName = $firstName;
-        return $this;
-    }
-
-    public function getLastName(): string
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName(string $lastName): User
-    {
-        $this->lastName = $lastName;
+        $this->name = $name;
         return $this;
     }
 
