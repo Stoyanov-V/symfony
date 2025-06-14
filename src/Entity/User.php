@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
-class User
+final class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
@@ -55,11 +55,13 @@ class User
         return $this;
     }
 
+    /** @noinspection PhpUnused */
     public function getEmail(): string
     {
         return $this->email;
     }
 
+    /** @noinspection PhpUnused */
     public function setEmail(string $email): User
     {
         $this->email = $email;
@@ -90,13 +92,15 @@ class User
 
     /**
      * @return Collection<int, Restaurant>
+     * @noinspection PhpUnused
      */
     public function getRestaurants(): Collection
     {
         return $this->restaurants;
     }
 
-    public function addRestaurant(Restaurant $restaurant): static
+    /** @noinspection PhpUnused */
+    public function addRestaurant(Restaurant $restaurant): User
     {
         if (!$this->restaurants->contains($restaurant)) {
             $this->restaurants->add($restaurant);
@@ -106,7 +110,8 @@ class User
         return $this;
     }
 
-    public function removeRestaurant(Restaurant $restaurant): static
+    /** @noinspection PhpUnused */
+    public function removeRestaurant(Restaurant $restaurant): User
     {
         if ($this->restaurants->removeElement($restaurant)) {
             $restaurant->removeUser($this);

@@ -6,7 +6,7 @@ namespace App\Dto\V1;
 
 class GetQueryDto
 {
-    public function __construct(?string $sort = null)
+    public function __construct(public ?string $sort = null)
     {
     }
 }

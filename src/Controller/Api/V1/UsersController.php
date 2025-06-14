@@ -15,13 +15,14 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/api/v1/users', name: 'api_v1_users_')]
-class UsersController extends AbstractController
+final class UsersController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'], format: 'json', stateless: true)]
     public function index(#[MapQueryString] GetUserQueryDto $userQueryDto, UserRepository $repository, UserFilter $filter): JsonResponse
     {
         $users = $filter->set($userQueryDto, $repository->createQueryBuilder('u'))
             ->filter()
+            ->sort()
             ->result();
 
 //        $users = $repository->findAll();

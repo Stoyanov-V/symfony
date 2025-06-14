@@ -11,7 +11,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ItemRepository::class)]
-class Item
+final class Item
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -42,7 +42,7 @@ class Item
         $this->categories = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -58,7 +58,7 @@ class Item
         return $this->restaurant;
     }
 
-    public function setRestaurant(?Restaurant $restaurant): static
+    public function setRestaurant(?Restaurant $restaurant): Item
     {
         $this->restaurant = $restaurant;
 
@@ -67,13 +67,14 @@ class Item
 
     /**
      * @return Collection<int, Category>
+     * @noinspection PhpUnused
      */
     public function getCategories(): Collection
     {
         return $this->categories;
     }
 
-    public function addCategory(Category $category): static
+    public function addCategory(Category $category): Item
     {
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
@@ -82,7 +83,7 @@ class Item
         return $this;
     }
 
-    public function removeCategory(Category $category): static
+    public function removeCategory(Category $category): Item
     {
         $this->categories->removeElement($category);
 
@@ -94,19 +95,21 @@ class Item
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(string $name): Item
     {
         $this->name = $name;
 
         return $this;
     }
 
+    /** @noinspection PhpUnused */
     public function getPrice(): ?float
     {
         return $this->price;
     }
 
-    public function setPrice(float $price): static
+    /** @noinspection PhpUnused */
+    public function setPrice(float $price): Item
     {
         $this->price = $price;
 
@@ -118,7 +121,7 @@ class Item
         return $this->description;
     }
 
-    public function setDescription(?string $description): static
+    public function setDescription(?string $description): Item
     {
         $this->description = $description;
 

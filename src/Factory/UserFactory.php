@@ -29,6 +29,7 @@ final class UserFactory extends PersistentProxyObjectFactory
             'email' => self::faker()->unique()->email(),
             'name' => self::faker()->name(),
             'password' => self::faker()->password(),
+            // @phpstan-ignore-next-line
             'restaurants' => lazy(fn() => RestaurantFactory::randomRange(1,3))
         ];
     }

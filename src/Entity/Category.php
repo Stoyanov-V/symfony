@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
-class Category
+final class Category
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -34,7 +34,7 @@ class Category
         $this->items = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -50,19 +50,19 @@ class Category
         return $this->restaurant;
     }
 
-    public function setRestaurant(?Restaurant $restaurant): static
+    public function setRestaurant(?Restaurant $restaurant): Category
     {
         $this->restaurant = $restaurant;
 
         return $this;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(string $name): Category
     {
         $this->name = $name;
 
@@ -77,7 +77,8 @@ class Category
         return $this->items;
     }
 
-    public function addItem(Item $item): static
+    /** @noinspection PhpUnused */
+    public function addItem(Item $item): Category
     {
         if (!$this->items->contains($item)) {
             $this->items->add($item);
@@ -87,7 +88,8 @@ class Category
         return $this;
     }
 
-    public function removeItem(Item $item): static
+    /** @noinspection PhpUnused */
+    public function removeItem(Item $item): Category
     {
         if ($this->items->removeElement($item)) {
             $item->removeCategory($this);

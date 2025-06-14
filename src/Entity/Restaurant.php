@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\RestaurantRepository;
@@ -8,7 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RestaurantRepository::class)]
-class Restaurant
+final class Restaurant
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -59,7 +61,7 @@ class Restaurant
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(string $name): Restaurant
     {
         $this->name = $name;
 
@@ -68,13 +70,14 @@ class Restaurant
 
     /**
      * @return Collection<int, User>
+     * @noinspection PhpUnused
      */
     public function getUsers(): Collection
     {
         return $this->users;
     }
 
-    public function addUser(User $user): static
+    public function addUser(User $user): Restaurant
     {
         if (!$this->users->contains($user)) {
             $this->users->add($user);
@@ -83,7 +86,7 @@ class Restaurant
         return $this;
     }
 
-    public function removeUser(User $user): static
+    public function removeUser(User $user): Restaurant
     {
         $this->users->removeElement($user);
 
@@ -92,13 +95,15 @@ class Restaurant
 
     /**
      * @return Collection<int, Category>
+     * @noinspection PhpUnused
      */
     public function getCategories(): Collection
     {
         return $this->categories;
     }
 
-    public function addCategory(Category $category): static
+    /** @noinspection PhpUnused */
+    public function addCategory(Category $category): Restaurant
     {
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
@@ -108,7 +113,8 @@ class Restaurant
         return $this;
     }
 
-    public function removeCategory(Category $category): static
+    /** @noinspection PhpUnused */
+    public function removeCategory(Category $category): Restaurant
     {
         if ($this->categories->removeElement($category)) {
             // set the owning side to null (unless already changed)
@@ -122,13 +128,15 @@ class Restaurant
 
     /**
      * @return Collection<int, Item>
+     * @noinspection PhpUnused
      */
     public function getItems(): Collection
     {
         return $this->items;
     }
 
-    public function addItem(Item $item): static
+    /** @noinspection PhpUnused */
+    public function addItem(Item $item): Restaurant
     {
         if (!$this->items->contains($item)) {
             $this->items->add($item);
@@ -138,7 +146,8 @@ class Restaurant
         return $this;
     }
 
-    public function removeItem(Item $item): static
+    /** @noinspection PhpUnused */
+    public function removeItem(Item $item): Restaurant
     {
         if ($this->items->removeElement($item)) {
             // set the owning side to null (unless already changed)

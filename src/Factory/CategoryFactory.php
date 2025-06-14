@@ -16,12 +16,14 @@ final class CategoryFactory extends PersistentProxyObjectFactory
 {
     /**
      * @return array{
+     *     restaurant: object,
      *     name: string
      * }
      */
     protected function defaults(): array
     {
         return [
+            // @phpstan-ignore-next-line
             'restaurant' => lazy(fn() => RestaurantFactory::random()),
             'name' => self::faker()->words(2, true),
         ];
