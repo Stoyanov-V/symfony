@@ -22,21 +22,23 @@ final class User
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private string $email;
 
     #[ORM\Column(type: 'string')]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private string $name;
 
 
     #[ORM\Column(type: 'string')]
+    #[Groups(['user:write'])]
     private string $password;
 
     /**
      * @var Collection<int, Restaurant>
      */
     #[ORM\ManyToMany(targetEntity: Restaurant::class, mappedBy: 'users')]
+    #[Groups(['user:read:with-restaurants'])]
     private Collection $restaurants;
 
     public function __construct()

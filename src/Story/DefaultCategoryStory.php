@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Story;
 
+use App\Entity\Category;
 use App\Factory\CategoryFactory;
 use Zenstruck\Foundry\Story;
 

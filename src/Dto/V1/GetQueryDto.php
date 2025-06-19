@@ -6,7 +6,11 @@ namespace App\Dto\V1;
 
 class GetQueryDto
 {
-    public function __construct(public ?string $sort = null)
-    {
+    public function __construct(
+        public ?string $sort = null,
+        public ?string $include = null,
+        public int $perPage = 25,
+        public int $page = 1,
+    ) {
     }
 }

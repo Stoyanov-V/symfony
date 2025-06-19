@@ -14,4 +14,9 @@ class UserFilter extends ApiFilter
     ];
 
     protected array $sortable = ['id', 'name'];
+
+    protected array $context = [
+        'default' => 'user:read',
+        'restaurants' => 'user:read:with-restaurants',
+    ];
 }
