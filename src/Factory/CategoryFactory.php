@@ -23,7 +23,6 @@ final class CategoryFactory extends PersistentProxyObjectFactory
     protected function defaults(): array
     {
         return [
-            // @phpstan-ignore-next-line
             'restaurant' => lazy(fn() => RestaurantFactory::random()),
             'name' => self::faker()->words(2, true),
         ];

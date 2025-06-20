@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RestaurantRepository::class)]
-final class Restaurant
+class Restaurant
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

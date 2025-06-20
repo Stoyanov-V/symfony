@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Factory;
 
 use App\Entity\User;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 use Zenstruck\Foundry\LazyValue;
 use function Zenstruck\Foundry\lazy;
@@ -14,13 +15,18 @@ use function Zenstruck\Foundry\lazy;
  */
 final class UserFactory extends PersistentProxyObjectFactory
 {
+    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher)
+    {
+        parent::__construct();
+    }
 
     /**
      * @return array{
-     *     'email': string,
-     *     'name': string,
-     *     'password': string,
-     *      restaurants: LazyValue
+     *     email: string,
+     *     name: string,
+     *     roles: array<string>,
+     *     password: LazyValue,
+     *     restaurants: LazyValue
      * }
      */
     protected function defaults(): array
@@ -28,8 +34,10 @@ final class UserFactory extends PersistentProxyObjectFactory
         return [
             'email' => self::faker()->unique()->email(),
             'name' => self::faker()->name(),
-            'password' => self::faker()->password(),
-            // @phpstan-ignore-next-line
+            'roles' => ['ROLE_USER'],
+            'password' => lazy(
+                fn() => $this->passwordHasher->hashPassword(new User(), self::faker()->password())
+            ),
             'restaurants' => lazy(fn() => RestaurantFactory::randomRange(1,3))
         ];
     }

@@ -65,3 +65,7 @@ sf: ## List all Symfony commands or pass the parameter "c=" to run a given comma
 
 cc: c=c:c ## Clear the cache
 cc: sf
+
+## —— 🔍 Run PHPStan static analysis —————————————————————————————————————————————
+inspect:
+	@$(PHP_CONT) vendor/bin/phpstan analyse src --ansi --memory-limit 512M

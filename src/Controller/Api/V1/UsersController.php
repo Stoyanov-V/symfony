@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
@@ -52,13 +53,20 @@ final class UsersController extends AbstractController
     public function create(
         #[MapRequestPayload] CreateUserRequestDto $dto,
         DenormalizerInterface $denormalizer,
+        UserPasswordHasherInterface $passwordHasher,
     ): JsonResponse
     {
         $user = $denormalizer->denormalize(
             (array) $dto,
             type: User::class,
-            context: ['groups' => 'user:write']
+            context: ['groups' => 'user:write'],
         );
+
+        $hashedPassword = $passwordHasher->hashPassword(
+            $user,
+            $dto->password
+        );
+        $user->setPassword($hashedPassword);
 
         $this->em->persist($user);
         $this->em->flush();

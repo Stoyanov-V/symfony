@@ -10,6 +10,6 @@ class DefaultRestaurantStory extends Story
 
     public function build(): void
     {
-        RestaurantFactory::createMany(20);
+        RestaurantFactory::createMany(120);
     }
 }
