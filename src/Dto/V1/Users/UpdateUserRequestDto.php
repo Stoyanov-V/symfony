@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\V1\Users;
 
+use App\Entity\User;
 use ArrayAccess;
 use ArrayIterator;
 use IteratorAggregate;
@@ -16,37 +17,43 @@ use Traversable;
  * @implements ArrayAccess<string, mixed>
  * @implements IteratorAggregate<string, mixed>
  */
-final readonly class CreateUserRequestDto implements ArrayAccess, IteratorAggregate, JsonSerializable
+final class UpdateUserRequestDto implements ArrayAccess, IteratorAggregate, JsonSerializable
 {
     /**
-     * @param  string  $name
-     * @param  string  $email
-     * @param  string  $password
-     * @param  array<string>  $roles
+     * @param  ?string  $name
+     * @param  ?string  $email
+     * @param  ?array<string>  $roles
      */
     public function __construct(
-        #[Assert\NotBlank]
-        #[Assert\Length(min: 3, max: 255)]
-        public string $name,
-        #[Assert\NotBlank]
-        #[Assert\Length(max: 180)]
-        #[Assert\Email]
-        public string $email,
-        #[Assert\NotBlank]
-        #[Assert\Length(min: 6)]
-        #[Assert\PasswordStrength(
-            minScore: Assert\PasswordStrength::STRENGTH_MEDIUM,
-        )]
-        public string $password,
+        #[Assert\NotBlank(groups: ['put', 'patch'])]
+        #[Assert\Length(min: 3, max: 255, groups: ['put', 'patch'])]
+        public ?string $name = null,
+
+        #[Assert\NotBlank(groups: ['put', 'patch'])]
+        #[Assert\Length(max: 180, groups: ['put', 'patch'])]
+        #[Assert\Email(groups: ['put', 'patch'])]
+        public ?string $email = null,
+
         #[Assert\Type('array')]
+        #[Assert\NotBlank(groups: ['put', 'patch'])]
         #[Assert\All([
-            new Assert\NotBlank(),
-            new Assert\Type('string'),
-            new Assert\Choice(choices: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER']),
+            new Assert\Type('string', groups: ['put', 'patch']),
+            new Assert\Choice(
+                choices: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER'],
+                groups: ['put', 'patch']
+            ),
         ])]
-        public array $roles = ['ROLE_USER'],
-    )
+        public ?array $roles = null,
+    ) {}
+
+    /** @noinspection PhpUnused */
+    public static function fromEntity(User $user): self
     {
+        return new self(
+            name: $user->getName(),
+            email: $user->getEmail(),
+            roles: $user->getRoles(),
+        );
     }
 
     public function offsetExists(mixed $offset): bool

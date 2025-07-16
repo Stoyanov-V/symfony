@@ -9,10 +9,10 @@
         "php": ">=8.4.6",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "doctrine/dbal": "4.2.4",
+        "doctrine/dbal": "4.3.0",
         "doctrine/doctrine-bundle": "2.15.0",
-        "doctrine/doctrine-migrations-bundle": "^3.4.1",
-        "doctrine/orm": "3.4.0",
+        "doctrine/doctrine-migrations-bundle": "3.4.2",
+        "doctrine/orm": "3.5.0",
         "phpdocumentor/reflection-docblock": "^5.6",
         "phpstan/phpdoc-parser": "^2.0",
         "runtime/frankenphp-symfony": "^0.2.0",
@@ -82,7 +82,7 @@
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "4.1.0",
         "phpstan/phpstan": "2.1.17",
-        "symfony/maker-bundle": "1.63.0",
+        "symfony/maker-bundle": "^1.63",
         "zenstruck/foundry": "2.6.0"
     }
 }
