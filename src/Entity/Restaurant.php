@@ -16,29 +16,40 @@ class Restaurant
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['category:read', 'user:read:with-restaurants'])]
+    #[Groups([
+        'restaurant:read',
+        'category:read',
+        'user:read:with-restaurants'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['category:read', 'user:read:with-restaurants'])]
+    #[Groups([
+        'restaurant:read',
+        'category:read',
+        'user:read:with-restaurants'
+    ])]
     private ?string $name = null;
 
     /**
      * @var Collection<int, User>
      */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'restaurants')]
+    #[Groups(['restaurant:read:with-users'])]
     private Collection $users;
 
     /**
      * @var Collection<int, Category>
      */
     #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'restaurant')]
+    #[Groups(['restaurant:read:with-categories'])]
     private Collection $categories;
 
     /**
      * @var Collection<int, Item>
      */
     #[ORM\OneToMany(targetEntity: Item::class, mappedBy: 'restaurant', orphanRemoval: true)]
+    #[Groups(['restaurant:read:with-items'])]
     private Collection $items;
 
     public function __construct()

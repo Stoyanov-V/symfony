@@ -20,15 +20,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['user:read'])]
+    #[Groups([
+        'user:read',
+        'restaurant:read:with-users'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(['user:read', 'user:write'])]
+    #[Groups([
+        'user:read',
+        'user:write',
+        'restaurant:read:with-users',
+    ])]
     private string $email;
 
     #[ORM\Column(type: 'string')]
-    #[Groups(['user:read', 'user:write'])]
+    #[Groups([
+        'user:read',
+        'user:write',
+        'restaurant:read:with-users',
+    ])]
     private string $name;
 
     /** @var array<string> $roles */

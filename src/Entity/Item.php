@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ItemRepository::class)]
 class Item
@@ -16,6 +17,7 @@ class Item
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('restaurant:read:with-items')]
     private int $id;
 
     #[ORM\ManyToOne(inversedBy: 'items')]
@@ -29,12 +31,15 @@ class Item
     private Collection $categories;
 
     #[ORM\Column(length: 255)]
+    #[Groups('restaurant:read:with-items')]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups('restaurant:read:with-items')]
     private ?float $price = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups('restaurant:read:with-items')]
     private ?string $description = null;
 
     public function __construct()

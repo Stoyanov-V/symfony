@@ -8,6 +8,7 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
@@ -15,12 +16,14 @@ class Category
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('restaurant:read:with-categories')]
     private int $id;
 
     #[ORM\ManyToOne(inversedBy: 'categories')]
     private ?Restaurant $restaurant = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('restaurant:read:with-categories')]
     private string $name;
 
     /**
