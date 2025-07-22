@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api\V1;
 
 use App\Dto\V1\Restaurants\GetRestaurantsQueryDto;
+use App\Entity\Restaurant;
 use App\Filters\V1\RestaurantFilter;
 use App\Repository\RestaurantRepository;
 use Exception;
@@ -39,6 +40,16 @@ final class RestaurantsController extends AbstractController
             $restaurants,
             status: Response::HTTP_OK,
             context: $context
+        );
+    }
+
+    #[Route('/{id}', name: 'show', methods: ['GET'])]
+    public function show(Restaurant $restaurant): JsonResponse
+    {
+        return $this->json(
+            $restaurant,
+            status: Response::HTTP_OK,
+            context: ['groups' => 'restaurant:read']
         );
     }
 }
