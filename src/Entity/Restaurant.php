@@ -26,6 +26,7 @@ class Restaurant
     #[ORM\Column(length: 255)]
     #[Groups([
         'restaurant:read',
+        'restaurant:write',
         'category:read',
         'user:read:with-restaurants'
     ])]
