@@ -6,14 +6,14 @@ namespace App\Factory;
 
 use App\Entity\Item;
 use Zenstruck\Foundry\LazyValue;
-use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 use function Zenstruck\Foundry\lazy;
 
 /**
- * @extends PersistentProxyObjectFactory<Item>
+ * @extends PersistentObjectFactory<Item>
  */
-final class ItemFactory extends PersistentProxyObjectFactory
+final class ItemFactory extends PersistentObjectFactory
 {
     /**
      * @return array{

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Factory;
 
 use App\Entity\Restaurant;
-use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @extends PersistentProxyObjectFactory<Restaurant>
+ * @extends PersistentObjectFactory<Restaurant>
  */
-final class RestaurantFactory extends PersistentProxyObjectFactory
+final class RestaurantFactory extends PersistentObjectFactory
 {
     /**
      * @return array{
