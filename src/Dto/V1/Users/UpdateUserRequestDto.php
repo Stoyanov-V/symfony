@@ -4,20 +4,11 @@ declare(strict_types=1);
 
 namespace App\Dto\V1\Users;
 
+use App\Dto\V1\EntityMappableInterface;
 use App\Entity\User;
-use ArrayAccess;
-use ArrayIterator;
-use IteratorAggregate;
-use JsonSerializable;
-use LogicException;
 use Symfony\Component\Validator\Constraints as Assert;
-use Traversable;
 
-/**
- * @implements ArrayAccess<string, mixed>
- * @implements IteratorAggregate<string, mixed>
- */
-final class UpdateUserRequestDto implements ArrayAccess, IteratorAggregate, JsonSerializable
+final class UpdateUserRequestDto implements EntityMappableInterface
 {
     /**
      * @param  ?string  $name
@@ -47,53 +38,14 @@ final class UpdateUserRequestDto implements ArrayAccess, IteratorAggregate, Json
     ) {}
 
     /** @noinspection PhpUnused */
-    public static function fromEntity(User $user): self
+    public static function fromEntity(object $entity): self
     {
+        assert($entity instanceof User);
+
         return new self(
-            name: $user->getName(),
-            email: $user->getEmail(),
-            roles: $user->getRoles(),
+            name: $entity->name,
+            email: $entity->email,
+            roles: $entity->getRoles(),
         );
-    }
-
-    public function offsetExists(mixed $offset): bool
-    {
-        return array_key_exists($offset, $this->toArray());
-    }
-
-    public function offsetGet(mixed $offset): mixed
-    {
-        return $this->toArray()[$offset] ?? null;
-    }
-
-    public function offsetSet(mixed $offset, mixed $value): void
-    {
-        throw new LogicException('Cannot modify readonly DTO');
-    }
-
-    public function offsetUnset(mixed $offset): void
-    {
-        throw new LogicException('Cannot unset properties of readonly DTO');
-    }
-
-    public function getIterator(): Traversable
-    {
-        return new ArrayIterator($this->toArray());
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function jsonSerialize(): array
-    {
-        return $this->toArray();
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function toArray(): array
-    {
-        return get_object_vars($this);
     }
 }

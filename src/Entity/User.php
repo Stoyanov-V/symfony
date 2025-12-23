@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\{Collection, ArrayCollection};
 use Doctrine\ORM\Mapping as ORM;
 use SensitiveParameter;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\{UserInterface, PasswordAuthenticatedUserInterface};
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -24,7 +22,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         'user:read',
         'restaurant:read:with-users'
     ])]
-    private ?int $id = null;
+    private(set) ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Groups([
@@ -32,7 +30,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         'user:write',
         'restaurant:read:with-users',
     ])]
-    private string $email;
+    public string $email {
+        get => $this->email;
+        set => $this->email = $value;
+    }
 
     #[ORM\Column(type: 'string')]
     #[Groups([
@@ -40,12 +41,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         'user:write',
         'restaurant:read:with-users',
     ])]
-    private string $name;
+    public string $name {
+        get => $this->name;
+        set => $this->name = $value;
+    }
 
     /** @var array<string> $roles */
     #[ORM\Column(type: 'json')]
     #[Groups(['user:write'])]
-    private array $roles = [];
+    public array $roles = [] {
+        set => $this->roles = array_values($value);
+    }
 
     #[ORM\Column(type: 'string')]
     #[Groups(['user:write'])]
@@ -56,46 +62,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\ManyToMany(targetEntity: Restaurant::class, mappedBy: 'users')]
     #[Groups(['user:read:with-restaurants'])]
-    private Collection $restaurants;
+    public Collection $restaurants {
+        get {
+            return $this->restaurants;
+        }
+    }
 
     public function __construct()
     {
         $this->restaurants = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function setId(?int $id): User
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /** @noinspection PhpUnused */
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    /** @noinspection PhpUnused */
-    public function setEmail(string $email): User
-    {
-        $this->email = $email;
-        return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): User
-    {
-        $this->name = $name;
-        return $this;
     }
 
     public function getPassword(): string
@@ -107,15 +82,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->password = $password;
         return $this;
-    }
-
-    /**
-     * @return Collection<int, Restaurant>
-     * @noinspection PhpUnused
-     */
-    public function getRestaurants(): Collection
-    {
-        return $this->restaurants;
     }
 
     /** @noinspection PhpUnused */
@@ -148,17 +114,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    /**
-     * @param array<string> $roles
-     * @noinspection PhpUnused
-     */
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
-
+    /** @noinspection PhpUnused */
     public function eraseCredentials(): void
     {
         // TODO: Implement eraseCredentials() method.

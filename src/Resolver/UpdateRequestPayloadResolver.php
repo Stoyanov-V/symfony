@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace App\Resolver;
 
 use App\Attribute\MapUpdateRequestPayload;
+use App\Dto\V1\EntityMappableInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use InvalidArgumentException;
+use LogicException;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\{BadRequestHttpException, NotFoundHttpException};
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -59,6 +60,13 @@ final readonly class UpdateRequestPayloadResolver implements ValueResolverInterf
         }
 
         if ($method === Request::METHOD_PATCH) {
+
+            if (!is_subclass_of($dtoClass, EntityMappableInterface::class)) {
+                throw new LogicException(sprintf(
+                    'DTO "%s" must implement EntityMappableInterface to be used with PATCH requests.',
+                    $dtoClass
+                ));
+            }
 
             $entity = $this->getEntity($request, $attribute);
 

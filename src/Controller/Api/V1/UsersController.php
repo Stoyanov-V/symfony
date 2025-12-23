@@ -5,24 +5,19 @@ declare(strict_types=1);
 namespace App\Controller\Api\V1;
 
 use App\Attribute\MapUpdateRequestPayload;
-use App\Dto\V1\Users\CreateUserRequestDto;
-use App\Dto\V1\Users\GetUserQueryDto;
-use App\Dto\V1\Users\UpdateUserRequestDto;
+use App\Dto\V1\Users\{GetUserQueryDto, CreateUserRequestDto, UpdateUserRequestDto};
 use App\Entity\User;
 use App\Filters\V1\UserFilter;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapQueryString;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpFoundation\{Response, JsonResponse};
+use Symfony\Component\HttpKernel\Attribute\{MapQueryString, MapRequestPayload};
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\{AbstractNormalizer, DenormalizerInterface};
 
 #[Route('/api/v1/users', name: 'api_v1_users_', format: 'json', stateless: true)]
 final class UsersController extends AbstractController
