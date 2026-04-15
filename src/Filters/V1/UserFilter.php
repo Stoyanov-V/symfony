@@ -13,7 +13,7 @@ class UserFilter extends ApiFilter
         'email' => ['eq'],
     ];
 
-    protected array $sortable = ['id', 'name'];
+    protected array $sortable = ['name'];
 
     protected array $context = [
         'default' => 'user:read',

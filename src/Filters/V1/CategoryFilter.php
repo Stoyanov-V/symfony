@@ -6,7 +6,7 @@ namespace App\Filters\V1;
 
 use App\Filters\ApiFilter;
 
-class RestaurantFilter extends ApiFilter
+final class CategoryFilter extends ApiFilter
 {
     protected array $filterable = [
         'name' => ['eq'],
@@ -15,9 +15,7 @@ class RestaurantFilter extends ApiFilter
     protected array $sortable = ['name'];
 
     protected array $context = [
-        'default' => 'restaurant:read',
-        'users' => 'restaurant:read:with-users',
-        'categories' => 'restaurant:read:with-categories',
-        'items' => 'restaurant:read:with-items',
+        'default' => 'category:read',
+        'restaurant' => 'category:read:with-restaurant',
     ];
 }

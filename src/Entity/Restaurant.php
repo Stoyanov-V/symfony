@@ -6,32 +6,34 @@ namespace App\Entity;
 
 use App\Repository\RestaurantRepository;
 use Doctrine\Common\Collections\{Collection, ArrayCollection};
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: RestaurantRepository::class)]
 class Restaurant
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[Groups([
         'restaurant:read',
         'category:read',
         'user:read:with-restaurants'
     ])]
-    private(set) ?int $id = null;
+    private(set) ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
     #[Groups([
         'restaurant:read',
         'restaurant:write',
         'category:read',
-        'user:read:with-restaurants'
+        'user:read:with-restaurants',
     ])]
     public string $name {
-        get => $this->name;
-        set => $this->name = $value;
+        set => trim($value);
     }
 
     /**
@@ -39,33 +41,21 @@ class Restaurant
      */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'restaurants')]
     #[Groups(['restaurant:read:with-users'])]
-    private Collection $users {
-        get {
-            return $this->users;
-        }
-    }
+    public private(set) Collection $users;
 
     /**
      * @var Collection<int, Category>
      */
     #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'restaurant')]
     #[Groups(['restaurant:read:with-categories'])]
-    private Collection $categories {
-        get {
-            return $this->categories;
-        }
-    }
+    private(set) Collection $categories;
 
     /**
      * @var Collection<int, Item>
      */
     #[ORM\OneToMany(targetEntity: Item::class, mappedBy: 'restaurant', orphanRemoval: true)]
     #[Groups(['restaurant:read:with-items'])]
-    private Collection $items {
-        get {
-            return $this->items;
-        }
-    }
+    private(set) Collection $items;
 
     public function __construct()
     {
@@ -95,7 +85,7 @@ class Restaurant
     {
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
-            $category->setRestaurant($this);
+            $category->restaurant = $this;
         }
 
         return $this;
@@ -105,8 +95,8 @@ class Restaurant
     public function removeCategory(Category $category): Restaurant
     {
         if ($this->categories->removeElement($category)) {
-            if ($category->getRestaurant() === $this) {
-                $category->setRestaurant(null);
+            if ($category->restaurant === $this) {
+                $category->restaurant = null;
             }
         }
 
@@ -118,7 +108,7 @@ class Restaurant
     {
         if (!$this->items->contains($item)) {
             $this->items->add($item);
-            $item->setRestaurant($this);
+            $item->restaurant = $this;
         }
 
         return $this;
@@ -128,8 +118,8 @@ class Restaurant
     public function removeItem(Item $item): Restaurant
     {
         if ($this->items->removeElement($item)) {
-            if ($item->getRestaurant() === $this) {
-                $item->setRestaurant(null);
+            if ($item->restaurant === $this) {
+                $item->restaurant = null;
             }
         }
 

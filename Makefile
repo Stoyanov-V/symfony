@@ -27,7 +27,7 @@ up: ## Start the docker hub in detached mode (no logs)
 start: build up ## Build and start the containers
 
 local: ## Start docker with local env
-	@$(DOCKER_COMP) --env-file=.env.local up --pull always -d --wait
+	@$(DOCKER_COMP) --env-file=.env.local up --pull missing --build -d --wait
 
 down: ## Stop the docker hub
 	@$(DOCKER_COMP) down --remove-orphans
@@ -68,4 +68,9 @@ cc: sf
 
 ## —— 🔍 Run PHPStan static analysis —————————————————————————————————————————————
 inspect:
-	@$(PHP_CONT) vendor/bin/phpstan analyse src --ansi --memory-limit 512M
+	@echo "🔍 Running PHPStan..."
+	@$(DOCKER_COMP) exec -e XDEBUG_MODE=off php composer phpstan
+
+fixtures: ## Load data fixtures (wipes database)
+	@echo "🌱 Loading fixtures..."
+	@$(DOCKER_COMP) exec -e XDEBUG_MODE=off php bin/console doctrine:fixtures:load --no-interaction

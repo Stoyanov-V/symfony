@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api\V1;
 
 use App\Attribute\MapUpdateRequestPayload;
+use App\Service\Mappers\RestaurantMapper;
 use App\Dto\V1\Restaurants\{CreateRestaurantRequestDto, GetRestaurantsQueryDto, UpdateRestaurantRequestDto};
 use App\Entity\Restaurant;
 use App\Filters\V1\RestaurantFilter;
@@ -16,7 +17,6 @@ use Symfony\Component\HttpFoundation\{Response, JsonResponse};
 use Symfony\Component\HttpKernel\Attribute\{MapQueryString, MapRequestPayload};
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Normalizer\{AbstractNormalizer, DenormalizerInterface};
 
 
 #[Route('/api/v1/restaurants', name: 'api_v1_restaurants_', format: 'json', stateless: true)]
@@ -24,7 +24,7 @@ final class RestaurantsController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly DenormalizerInterface $denormalizer,
+        private readonly RestaurantMapper $mapper,
     ) {}
 
     /**
@@ -43,22 +43,22 @@ final class RestaurantsController extends AbstractController
             ->sort()
             ->paginate();
 
-        $context = $filter->include($restaurantsQueryDto);
-
         return $this->json(
             $restaurants,
-            status: Response::HTTP_OK,
-            context: $context
+            context: $filter->include($restaurantsQueryDto)
         );
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
-    public function show(Restaurant $restaurant): JsonResponse
+    public function show(
+        Restaurant $restaurant,
+        #[MapQueryString] GetRestaurantsQueryDto $queryDto,
+        RestaurantFilter $filter,
+    ): JsonResponse
     {
         return $this->json(
             $restaurant,
-            status: Response::HTTP_OK,
-            context: ['groups' => 'restaurant:read']
+            context: $filter->include($queryDto),
         );
     }
 
@@ -70,11 +70,7 @@ final class RestaurantsController extends AbstractController
         #[MapRequestPayload] CreateRestaurantRequestDto $dto,
     ): JsonResponse
     {
-        $restaurant = $this->denormalizer->denormalize(
-            $dto,
-            type: Restaurant::class,
-            context: ['groups' => 'restaurant:write']
-        );
+        $restaurant = $this->mapper->map($dto, Restaurant::class, 'restaurant:write');
 
         $this->em->persist($restaurant);
         $this->em->flush();
@@ -93,21 +89,12 @@ final class RestaurantsController extends AbstractController
         #[MapUpdateRequestPayload(entityClass: Restaurant::class)] UpdateRestaurantRequestDto $dto,
     ): JsonResponse
     {
-        $restaurant = $this->denormalizer->denormalize(
-            $dto,
-            type: Restaurant::class,
-            context: [
-                AbstractNormalizer::OBJECT_TO_POPULATE => $restaurant,
-                'groups' => 'restaurant:write',
-            ],
-        );
+        $restaurant = $this->mapper->map($dto, $restaurant, 'restaurant:write');
 
-        $this->em->persist($restaurant);
         $this->em->flush();
 
         return $this->json(
             $restaurant,
-            status: Response::HTTP_OK,
             context: ['groups' => 'restaurant:read']
         );
     }

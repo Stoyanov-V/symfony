@@ -5,79 +5,52 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\CategoryRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\{Collection, ArrayCollection};
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    #[Groups('restaurant:read:with-categories')]
-    private int $id;
-
-    #[ORM\ManyToOne(inversedBy: 'categories')]
-    private ?Restaurant $restaurant = null;
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Groups([
+        'category:read',
+        'restaurant:read:with-categories',
+    ])]
+    private(set) ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('restaurant:read:with-categories')]
-    private string $name;
+    #[Groups([
+        'category:read',
+        'category:write',
+        'restaurant:read:with-categories',
+    ])]
+    public string $name {
+        set => trim($value);
+    }
+
+    #[ORM\ManyToOne(inversedBy: 'categories')]
+    #[Groups([
+        'category:write',
+        'category:read:with-restaurant',
+    ])]
+    public ?Restaurant $restaurant = null;
+
 
     /**
      * @var Collection<int, Item>
      */
     #[ORM\ManyToMany(targetEntity: Item::class, mappedBy: 'categories')]
-    private Collection $items;
+    private(set) Collection $items;
 
     public function __construct()
     {
         $this->items = new ArrayCollection();
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): Category
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    public function getRestaurant(): ?Restaurant
-    {
-        return $this->restaurant;
-    }
-
-    public function setRestaurant(?Restaurant $restaurant): Category
-    {
-        $this->restaurant = $restaurant;
-
-        return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): Category
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Item>
-     */
-    public function getItems(): Collection
-    {
-        return $this->items;
     }
 
     /** @noinspection PhpUnused */

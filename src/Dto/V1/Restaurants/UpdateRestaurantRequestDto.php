@@ -14,6 +14,10 @@ final class UpdateRestaurantRequestDto implements EntityMappableInterface
         #[Assert\NotBlank(groups: ['put', 'patch'])]
         #[Assert\Length(min: 2, max: 255, groups: ['put', 'patch'])]
         public ?string $name = null,
+
+        /** @var array<string>|null */
+        #[Assert\All([new Assert\Uuid()])]
+        public ?array $userIds = null,
     ){}
 
     public static function fromEntity(object $entity): self
@@ -22,6 +26,10 @@ final class UpdateRestaurantRequestDto implements EntityMappableInterface
 
         return new self(
             name: $entity->name,
+            userIds: $entity->users
+                ->map(fn($user) => $user->id?->toRfc4122())
+                ->filter(fn(?string $id) => $id !== null)
+                ->toArray()
         );
     }
 }

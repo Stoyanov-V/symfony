@@ -25,8 +25,7 @@ final class UsersController extends AbstractController
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly DenormalizerInterface $denormalizer,
-    )
-    {}
+    ) {}
 
     /**
      * @throws Exception
@@ -78,11 +77,10 @@ final class UsersController extends AbstractController
             context: ['groups' => 'user:write'],
         );
 
-        $hashedPassword = $passwordHasher->hashPassword(
+        $user->password = $passwordHasher->hashPassword(
             $user,
             $dto->password
         );
-        $user->setPassword($hashedPassword);
 
         $this->em->persist($user);
         $this->em->flush();
@@ -112,7 +110,6 @@ final class UsersController extends AbstractController
             ],
         );
 
-        $this->em->persist($user);
         $this->em->flush();
 
         return $this->json(

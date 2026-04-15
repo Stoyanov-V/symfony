@@ -7,7 +7,8 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\{Collection, ArrayCollection};
 use Doctrine\ORM\Mapping as ORM;
-use SensitiveParameter;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Security\Core\User\{UserInterface, PasswordAuthenticatedUserInterface};
 use Symfony\Component\Serializer\Attribute\Groups;
 
@@ -16,13 +17,14 @@ use Symfony\Component\Serializer\Attribute\Groups;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[Groups([
         'user:read',
         'restaurant:read:with-users'
     ])]
-    private(set) ?int $id = null;
+    private(set) ?Uuid $id = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Groups([
@@ -31,8 +33,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         'restaurant:read:with-users',
     ])]
     public string $email {
-        get => $this->email;
-        set => $this->email = $value;
+        set => $this->email = $value
+                |> trim(...)
+                |> strtolower(...);
     }
 
     #[ORM\Column(type: 'string')]
@@ -42,20 +45,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         'restaurant:read:with-users',
     ])]
     public string $name {
-        get => $this->name;
-        set => $this->name = $value;
+        set => $this->name = trim($value);
     }
 
     /** @var array<string> $roles */
     #[ORM\Column(type: 'json')]
     #[Groups(['user:write'])]
     public array $roles = [] {
+        get => $this->roles
+                |>array_unique(...)
+                |>array_values(...);
         set => $this->roles = array_values($value);
     }
 
     #[ORM\Column(type: 'string')]
     #[Groups(['user:write'])]
-    private string $password;
+    public string $password {
+        get => $this->password;
+        set => $this->password = $value;
+    }
 
     /**
      * @var Collection<int, Restaurant>
@@ -76,12 +84,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPassword(): string
     {
         return $this->password;
-    }
-
-    public function setPassword(#[SensitiveParameter] string $password): User
-    {
-        $this->password = $password;
-        return $this;
     }
 
     /** @noinspection PhpUnused */
@@ -107,17 +109,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        $roles = $this->roles;
 
-        $roles[] =  'ROLE_USER';
-
-        return array_unique($roles);
-    }
-
-    /** @noinspection PhpUnused */
-    public function eraseCredentials(): void
-    {
-        // TODO: Implement eraseCredentials() method.
+        return $this->roles;
     }
 
     public function getUserIdentifier(): string
