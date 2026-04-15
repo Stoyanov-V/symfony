@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api\V1;
 
 use App\Attribute\MapUpdateRequestPayload;
+use App\Service\Mappers\UserMapper;
 use App\Dto\V1\Users\{GetUserQueryDto, CreateUserRequestDto, UpdateUserRequestDto};
 use App\Entity\User;
 use App\Filters\V1\UserFilter;
@@ -14,17 +15,15 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{Response, JsonResponse};
 use Symfony\Component\HttpKernel\Attribute\{MapQueryString, MapRequestPayload};
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Normalizer\{AbstractNormalizer, DenormalizerInterface};
 
 #[Route('/api/v1/users', name: 'api_v1_users_', format: 'json', stateless: true)]
 final class UsersController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly DenormalizerInterface $denormalizer,
+        private readonly UserMapper $mapper,
     ) {}
 
     /**
@@ -43,22 +42,22 @@ final class UsersController extends AbstractController
             ->sort()
             ->paginate();
 
-        $context = $filter->include($userQueryDto);
-
         return $this->json(
             $users,
-            status: Response::HTTP_OK,
-            context: $context
+            context: $filter->include($userQueryDto)
         );
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
-    public function show(User $user): JsonResponse
+    public function show(
+        User $user,
+        #[MapQueryString] GetUserQueryDto $queryDto,
+        UserFilter $filter
+    ): JsonResponse
     {
         return $this->json(
             $user,
-            status: Response::HTTP_OK,
-            context: ['groups' => 'user:read']
+            context: $filter->include($queryDto)
         );
     }
 
@@ -68,19 +67,9 @@ final class UsersController extends AbstractController
     #[Route('/', name: 'create', methods: ['POST'])]
     public function create(
         #[MapRequestPayload] CreateUserRequestDto $dto,
-        UserPasswordHasherInterface $passwordHasher,
     ): JsonResponse
     {
-        $user = $this->denormalizer->denormalize(
-            $dto,
-            type: User::class,
-            context: ['groups' => 'user:write'],
-        );
-
-        $user->password = $passwordHasher->hashPassword(
-            $user,
-            $dto->password
-        );
+        $user = $this->mapper->map($dto, User::class, 'user:write');
 
         $this->em->persist($user);
         $this->em->flush();
@@ -101,20 +90,12 @@ final class UsersController extends AbstractController
         #[MapUpdateRequestPayload(entityClass: User::class)] UpdateUserRequestDto $dto,
     ): JsonResponse
     {
-        $user = $this->denormalizer->denormalize(
-            $dto,
-            type: User::class,
-            context: [
-                AbstractNormalizer::OBJECT_TO_POPULATE => $user,
-                'groups' => 'user:write',
-            ],
-        );
+        $user = $this->mapper->map($dto, $user, 'user:write');
 
         $this->em->flush();
 
         return $this->json(
             $user,
-            status: Response::HTTP_OK,
             context: ['groups' => 'user:read']
         );
     }
