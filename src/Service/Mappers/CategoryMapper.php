@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service\Mappers;
 
-use App\Dto\V1\Categories\{CreateCategoryRequestDto, UpdateCategoryRequestDto};
 use App\Entity\{Category, Restaurant};
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
@@ -26,17 +25,12 @@ final readonly class CategoryMapper extends EntityMapper
             return;
         }
 
-        if (!$dto instanceof CreateCategoryRequestDto && !$dto instanceof UpdateCategoryRequestDto) {
-            return;
-        }
-        if ($dto->restaurantId === null) {
-            return;
-        }
-
-        try {
-            $entity->restaurant = $this->em->getReference(Restaurant::class, $dto->restaurantId);
-        } catch (ORMException $e) {
-            throw new RuntimeException("Failed to create Restaurant reference: " . $e->getMessage());
+        if (isset($dto->restaurantId)) {
+            try {
+                $entity->restaurant = $this->em->getReference(Restaurant::class, $dto->restaurantId);
+            } catch (ORMException $e) {
+                throw new RuntimeException("Failed to get Restaurant reference: " . $e->getMessage(), 0, $e);
+            }
         }
     }
 }

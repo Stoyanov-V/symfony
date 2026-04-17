@@ -21,6 +21,7 @@ class Category
     #[Groups([
         'category:read',
         'restaurant:read:with-categories',
+        'item:read:with-categories',
     ])]
     private(set) ?Uuid $id = null;
 
@@ -29,6 +30,7 @@ class Category
         'category:read',
         'category:write',
         'restaurant:read:with-categories',
+        'item:read:with-categories',
     ])]
     public string $name {
         set => trim($value);
@@ -46,6 +48,9 @@ class Category
      * @var Collection<int, Item>
      */
     #[ORM\ManyToMany(targetEntity: Item::class, mappedBy: 'categories')]
+    #[Groups([
+        'category:read:with-items',
+    ])]
     private(set) Collection $items;
 
     public function __construct()

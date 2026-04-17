@@ -5,58 +5,57 @@ declare(strict_types=1);
 namespace App\Controller\Api\V1;
 
 use App\Attribute\MapUpdateRequestPayload;
-use App\Service\Mappers\CategoryMapper;
-use App\Dto\V1\Categories\{CreateCategoryRequestDto, GetCategoryQueryDto, UpdateCategoryRequestDto};
-use App\Entity\Category;
-use App\Filters\V1\CategoryFilter;
-use App\Repository\CategoryRepository;
+use App\Dto\V1\Items\{GetItemQueryDto, CreateItemRequestDto, UpdateItemRequestDto};
+use App\Entity\Item;
+use App\Filters\V1\ItemFilter;
+use App\Repository\ItemRepository;
+use App\Service\Mappers\ItemMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\{JsonResponse, Response};
+use Symfony\Component\HttpFoundation\{Response, JsonResponse};
 use Symfony\Component\HttpKernel\Attribute\{MapQueryString, MapRequestPayload};
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
-#[Route('/api/v1/categories', name: 'api_v1_categories_', format: 'json', stateless: true)]
-final class CategoriesController extends AbstractController
+#[Route('/api/v1/items', name: 'api_v1_items_', format: 'json', stateless: true)]
+final class ItemsController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly CategoryMapper $mapper,
+        private readonly ItemMapper $mapper,
     ) {}
-
     /**
      * @throws Exception
      */
     #[Route('/', name: 'index', methods: ['GET'])]
     public function index(
-        #[MapQueryString] GetCategoryQueryDto $queryDto,
-        CategoryRepository $repository,
-        CategoryFilter $filter,
+        #[MapQueryString] GetItemQueryDto $queryDto,
+        ItemRepository $repository,
+        ItemFilter $filter,
     ): JsonResponse
     {
-        $categories = $filter
-            ->set($queryDto, $repository->createQueryBuilder('c'))
+        $items = $filter
+            ->set($queryDto, $repository->createQueryBuilder('i'))
             ->filter()
             ->sort()
             ->paginate();
 
         return $this->json(
-            $categories,
+            $items,
             context: $filter->include($queryDto)
         );
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(
-        Category $category,
-        #[MapQueryString] GetCategoryQueryDto $queryDto,
-        CategoryFilter $filter
+        Item $item,
+        #[MapQueryString] GetItemQueryDto $queryDto,
+        ItemFilter $filter,
     ): JsonResponse
     {
         return $this->json(
-            $category,
+            $item,
             context: $filter->include($queryDto)
         );
     }
@@ -66,18 +65,18 @@ final class CategoriesController extends AbstractController
      */
     #[Route('/', name: 'create', methods: ['POST'])]
     public function create(
-        #[MapRequestPayload] CreateCategoryRequestDto $dto,
+        #[MapRequestPayload] CreateItemRequestDto $dto,
     ): JsonResponse
     {
-        $category = $this->mapper->map($dto, Category::class, 'category:write');
+        $item = $this->mapper->map($dto, Item::class, 'item:write');
 
-        $this->em->persist($category);
+        $this->em->persist($item);
         $this->em->flush();
 
         return $this->json(
-            $category,
+            $item,
             status: Response::HTTP_CREATED,
-            context: ['groups' => 'category:read']
+            context: ['groups' => 'item:read']
         );
     }
 
@@ -86,24 +85,24 @@ final class CategoriesController extends AbstractController
      */
     #[Route('/{id}', name: 'update', methods: ['PUT', 'PATCH'])]
     public function update(
-        Category $category,
-        #[MapUpdateRequestPayload(entityClass: Category::class)] UpdateCategoryRequestDto $dto,
+        Item $item,
+        #[MapUpdateRequestPayload(entityClass: Item::class)] UpdateItemRequestDto $dto,
     ): JsonResponse
     {
-        $category = $this->mapper->map($dto, $category, 'category:write');
+        $item = $this->mapper->map($dto, $item, 'item:write');
 
         $this->em->flush();
 
         return $this->json(
-            $category,
-            context: ['groups' => 'category:read']
+            $item,
+            context: ['groups' => 'item:read']
         );
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
-    public function delete(Category $category): JsonResponse
+    public function delete(Item $item): JsonResponse
     {
-        $this->em->remove($category);
+        $this->em->remove($item);
         $this->em->flush();
 
         return $this->json(null, status: Response::HTTP_NO_CONTENT);

@@ -20,35 +20,66 @@ class Item
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups('restaurant:read:with-items')]
+    #[Groups([
+        'item:read',
+        'item:write',
+        'restaurant:read:with-items',
+        'category:read:with-items',
+    ])]
     private(set) ?Uuid $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'items')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        'item:write',
+        'item:read:with-restaurant',
+    ])]
     public ?Restaurant $restaurant = null;
 
     /**
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'items')]
+    #[Groups([
+        'item:write',
+        'item:read:with-categories'
+    ])]
     private(set) Collection $categories;
 
     #[ORM\Column(length: 255)]
-    #[Groups('restaurant:read:with-items')]
+    #[Groups([
+        'item:read',
+        'item:write',
+        'restaurant:read:with-items',
+        'category:read:with-items',
+    ])]
     public string $name {
         set => $this->name = trim($value);
     }
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    #[Groups('restaurant:read:with-items')]
-    public float $price {
-        set => $this->price = $value < 0
-            ? throw new InvalidArgumentException("Price cannot be negative.")
-            : (float) $value;
+    #[Groups([
+        'item:read',
+        'item:write',
+        'restaurant:read:with-items',
+        'category:read:with-items',
+    ])]
+    public string $price {
+        set {
+            if ((float) $value < 0) {
+                throw new InvalidArgumentException("Price cannot be negative.");
+            }
+            $this->price = (string) $value;
+        }
     }
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups('restaurant:read:with-items')]
+    #[Groups([
+        'item:read',
+        'item:write',
+        'restaurant:read:with-items',
+        'category:read:with-items',
+    ])]
     public ?string $description = null;
 
     public function __construct()

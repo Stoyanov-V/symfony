@@ -6,7 +6,7 @@ namespace App\Filters\V1;
 
 use App\Filters\ApiFilter;
 
-class RestaurantFilter extends ApiFilter
+final class RestaurantFilter extends ApiFilter
 {
     protected array $filterable = [
         'name' => ['eq'],

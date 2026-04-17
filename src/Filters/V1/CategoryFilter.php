@@ -17,5 +17,6 @@ final class CategoryFilter extends ApiFilter
     protected array $context = [
         'default' => 'category:read',
         'restaurant' => 'category:read:with-restaurant',
+        'items' => 'category:read:with-items',
     ];
 }

@@ -21,7 +21,8 @@ class Restaurant
     #[Groups([
         'restaurant:read',
         'category:read',
-        'user:read:with-restaurants'
+        'user:read:with-restaurants',
+        'item:read:with-restaurant',
     ])]
     private(set) ?Uuid $id = null;
 
@@ -31,6 +32,7 @@ class Restaurant
         'restaurant:write',
         'category:read',
         'user:read:with-restaurants',
+        'item:read:with-restaurant',
     ])]
     public string $name {
         set => trim($value);
@@ -41,7 +43,7 @@ class Restaurant
      */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'restaurants')]
     #[Groups(['restaurant:read:with-users'])]
-    public private(set) Collection $users;
+    private(set) Collection $users;
 
     /**
      * @var Collection<int, Category>

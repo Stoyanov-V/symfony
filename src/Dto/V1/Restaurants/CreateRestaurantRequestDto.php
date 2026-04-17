@@ -8,6 +8,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final readonly class CreateRestaurantRequestDto
 {
+    /**
+     * @param array<string>|null $userIds
+     */
     public function __construct(
         #[Assert\NotBlank]
         #[Assert\Length(min: 2, max: 255)]
@@ -15,7 +18,5 @@ final readonly class CreateRestaurantRequestDto
 
         #[Assert\All([new Assert\Uuid()])]
         public ?array $userIds = null,
-    )
-    {
-    }
+    ) {}
 }

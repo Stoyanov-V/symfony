@@ -6,7 +6,7 @@ namespace App\Filters\V1;
 
 use App\Filters\ApiFilter;
 
-class UserFilter extends ApiFilter
+final class UserFilter extends ApiFilter
 {
     protected array $filterable = [
         'name' => ['eq'],

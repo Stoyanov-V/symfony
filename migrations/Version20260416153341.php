@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260120193603 extends AbstractMigration
+final class Version20260416153341 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -22,7 +22,7 @@ final class Version20260120193603 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE category (id UUID NOT NULL, name VARCHAR(255) NOT NULL, restaurant_id UUID DEFAULT NULL, PRIMARY KEY (id))');
         $this->addSql('CREATE INDEX IDX_64C19C1B1E7706E ON category (restaurant_id)');
-        $this->addSql('CREATE TABLE item (id UUID NOT NULL, name VARCHAR(255) NOT NULL, price DOUBLE PRECISION NOT NULL, description TEXT DEFAULT NULL, restaurant_id UUID NOT NULL, PRIMARY KEY (id))');
+        $this->addSql('CREATE TABLE item (id UUID NOT NULL, name VARCHAR(255) NOT NULL, price NUMERIC(10, 2) NOT NULL, description TEXT DEFAULT NULL, restaurant_id UUID NOT NULL, PRIMARY KEY (id))');
         $this->addSql('CREATE INDEX IDX_1F1B251EB1E7706E ON item (restaurant_id)');
         $this->addSql('CREATE TABLE item_category (item_id UUID NOT NULL, category_id UUID NOT NULL, PRIMARY KEY (item_id, category_id))');
         $this->addSql('CREATE INDEX IDX_6A41D10A126F525E ON item_category (item_id)');
