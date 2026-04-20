@@ -74,3 +74,7 @@ inspect:
 fixtures: ## Load data fixtures (wipes database)
 	@echo "🌱 Loading fixtures..."
 	@$(DOCKER_COMP) exec -e XDEBUG_MODE=off php bin/console doctrine:fixtures:load --no-interaction
+
+## —— Security & Redis 🔐 ——————————————————————————————————————————————————————
+tokens-wipe: c=cache:pool:clear auth_token_storage ## Wipe all Redis auth tokens
+tokens-wipe: sf

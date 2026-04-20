@@ -48,6 +48,15 @@ services:
       - ${POSTGRES_PORT:-5432}:5432
 ###< doctrine/doctrine-bundle ###
 
+###> redis/predis-bundle ###
+  redis:
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+###< redis/predis-bundle ###
+
 networks:
   app:
     driver: bridge
