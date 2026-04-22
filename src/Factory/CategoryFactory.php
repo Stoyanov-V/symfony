@@ -17,14 +17,18 @@ final class CategoryFactory extends PersistentObjectFactory
     /**
      * @return array{
      *     restaurant: object,
-     *     name: string
+     *     name: array{en: string, de: string, bg: string}
      * }
      */
     protected function defaults(): array
     {
         return [
             'restaurant' => lazy(fn() => RestaurantFactory::random()),
-            'name' => self::faker()->words(2, true),
+            'name' => [
+                'en' => self::faker()->words(2, true),
+                'de' => self::faker()->words(2, true),
+                'bg' => self::faker()->words(2, true),
+            ],
         ];
     }
 

@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Entity\Traits\TimestampableTrait;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\{Collection, ArrayCollection};
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -29,15 +30,18 @@ class Category
     ])]
     private(set) ?Uuid $id = null;
 
-    #[ORM\Column(length: 255)]
+    /** @var array<string, string> */
+    #[ORM\Column(type: Types::JSON)]
     #[Groups([
         'category:read',
         'category:write',
         'restaurant:read:with-categories',
         'item:read:with-categories',
     ])]
-    public string $name {
-        set => trim($value);
+    public array $name = [] {
+        set {
+            $this->name = array_map(trim(...), $value);
+        }
     }
 
     #[ORM\ManyToOne(inversedBy: 'categories')]

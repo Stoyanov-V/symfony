@@ -15,6 +15,8 @@ final class ItemFilter extends ApiFilter
 
     protected array $sortable = ['name', 'price'];
 
+    protected array $translatable = ['name'];
+
     protected array $context = [
         'default' => 'item:read',
         'restaurant' => 'item:read:with-restaurant',

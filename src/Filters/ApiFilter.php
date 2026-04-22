@@ -9,6 +9,7 @@ use ArrayIterator;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ApiFilter
 {
@@ -23,6 +24,9 @@ class ApiFilter
 
     /** @var array<string> */
     protected array $sortable = [];
+
+    /** @var array<string> */
+    protected array $translatable = [];
 
     /** @var array<string, string> */
     protected array $operatorMap = [
@@ -39,11 +43,13 @@ class ApiFilter
      */
     protected array $context = [];
 
+    public function __construct(private readonly RequestStack $requestStack) {}
+
     public function set(GetQueryDto $dto, QueryBuilder $queryBuilder): static
     {
         $this->dto = $dto;
         $this->queryBuilder = $queryBuilder;
-        $this->rootAlias = $queryBuilder->getRootAliases()[0];
+        $this->rootAlias = array_first($queryBuilder->getRootAliases());
 
         return $this;
     }
@@ -67,8 +73,16 @@ class ApiFilter
             $value = $query[$operator];
             $operator = $this->operatorMap[$operator];
 
-            $this->queryBuilder->andWhere("$this->rootAlias.$field $operator :$field")
-                ->setParameter($field, $value);
+
+            if (in_array($field, $this->translatable, true)) {
+                $this->queryBuilder->andWhere("JSON_GET_TEXT($this->rootAlias.$field, :locale) $operator :$field")
+                    ->setParameter('locale', $this->getLocale())
+                    ->setParameter($field, $value);
+            } else {
+                $this->queryBuilder->andWhere("$this->rootAlias.$field $operator :$field")
+                    ->setParameter($field, $value);
+            }
+
         }
 
         return $this;
@@ -84,14 +98,19 @@ class ApiFilter
 
         foreach ($fields as $field) {
             $column = ltrim($field, '-');
-
             if(!in_array($column, $this->sortable)) {
                 continue;
             }
 
-            $direction = str_starts_with($field, '-') ? 'desc' : 'ASC';
+            $direction = str_starts_with($field, '-') ? 'DESC' : 'ASC';
 
-            $this->queryBuilder->addOrderBy("$this->rootAlias.$column", $direction);
+            if (in_array($column, $this->translatable, true)) {
+                $this->queryBuilder
+                    ->addOrderBy("JSON_GET_TEXT($this->rootAlias.$column, :locale)", $direction)
+                    ->setParameter('locale', $this->getLocale());
+            } else {
+                $this->queryBuilder->addOrderBy("$this->rootAlias.$column", $direction);
+            }
 
         }
 
@@ -154,6 +173,8 @@ class ApiFilter
         return $context;
     }
 
+    //TODO: search filtering, user restriction by restaurant, tests, images, api cache
+
     /**
      * @return array<object>
      */
@@ -162,5 +183,12 @@ class ApiFilter
         return $this->queryBuilder
             ->getQuery()
             ->getResult();
+    }
+
+    protected function getLocale(): string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        return $request ? $request->getPreferredLanguage(['en', 'de', 'bg']) : 'en';
     }
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d9f4b9426207e5fd96c9231df158aca1",
+    "content-hash": "043d699c34871add82884a5fbae97881",
     "packages": [
         {
             "name": "doctrine/collections",
@@ -1706,6 +1706,80 @@
                 "source": "https://github.com/php-fig/log/tree/3.0.2"
             },
             "time": "2024-09-11T13:17:53+00:00"
+        },
+        {
+            "name": "scienta/doctrine-json-functions",
+            "version": "6.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ScientaNL/DoctrineJsonFunctions.git",
+                "reference": "d19d67a40734fd81025bfffdf40ff26d5ace16ea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ScientaNL/DoctrineJsonFunctions/zipball/d19d67a40734fd81025bfffdf40ff26d5ace16ea",
+                "reference": "d19d67a40734fd81025bfffdf40ff26d5ace16ea",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "^3.2 || ^4",
+                "doctrine/lexer": "^2.0 || ^3.0",
+                "doctrine/orm": "^2.19 || ^3",
+                "ext-pdo": "*",
+                "php": "^8.1",
+                "symfony/polyfill-php83": "^1.27"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan": "^2.1",
+                "phpstan/phpstan-doctrine": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpunit/phpunit": "^10.0 || ^11.0 || ^12.5",
+                "psalm/plugin-phpunit": "^0.19",
+                "slevomat/coding-standard": "~8",
+                "symfony/cache": "^5.4 || ^6.4 || ^7.4 || ^8.0",
+                "symfony/var-exporter": "^6.4 || ^7.4 || ^8.0",
+                "vimeo/psalm": "^6.15",
+                "webmozart/assert": "^1.9.1 || ^2.1"
+            },
+            "suggest": {
+                "dunglas/doctrine-json-odm": "To serialize / deserialize objects as JSON documents."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Scienta\\DoctrineJsonFunctions\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Doctrine Json Functions Contributors",
+                    "homepage": "https://github.com/ScientaNL/DoctrineJsonFunctions/contributors"
+                }
+            ],
+            "description": "A set of extensions to Doctrine that add support for json query functions.",
+            "keywords": [
+                "database",
+                "doctrine",
+                "dql",
+                "json",
+                "mariadb",
+                "mysql",
+                "orm",
+                "postgres",
+                "postgresql",
+                "sqlite"
+            ],
+            "support": {
+                "issues": "https://github.com/ScientaNL/DoctrineJsonFunctions/issues",
+                "source": "https://github.com/ScientaNL/DoctrineJsonFunctions/tree/6.5.0"
+            },
+            "time": "2026-03-10T08:22:48+00:00"
         },
         {
             "name": "symfony/cache",
@@ -3616,6 +3690,86 @@
             ],
             "support": {
                 "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.36.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-04-10T17:25:58+00:00"
+        },
+        {
+            "name": "symfony/polyfill-php83",
+            "version": "v1.36.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php83.git",
+                "reference": "3600c2cb22399e25bb226e4a135ce91eeb2a6149"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php83/zipball/3600c2cb22399e25bb226e4a135ce91eeb2a6149",
+                "reference": "3600c2cb22399e25bb226e4a135ce91eeb2a6149",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php83\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.3+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php83/tree/v1.36.0"
             },
             "funding": [
                 {

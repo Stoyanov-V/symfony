@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260417082215 extends AbstractMigration
+final class Version20260421170025 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,9 +20,9 @@ final class Version20260417082215 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE category (id UUID NOT NULL, name VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, restaurant_id UUID DEFAULT NULL, PRIMARY KEY (id))');
+        $this->addSql('CREATE TABLE category (id UUID NOT NULL, name JSON NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, restaurant_id UUID DEFAULT NULL, PRIMARY KEY (id))');
         $this->addSql('CREATE INDEX IDX_64C19C1B1E7706E ON category (restaurant_id)');
-        $this->addSql('CREATE TABLE item (id UUID NOT NULL, name VARCHAR(255) NOT NULL, price NUMERIC(10, 2) NOT NULL, description TEXT DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, restaurant_id UUID NOT NULL, PRIMARY KEY (id))');
+        $this->addSql('CREATE TABLE item (id UUID NOT NULL, name JSON NOT NULL, price NUMERIC(10, 2) NOT NULL, description JSON DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, restaurant_id UUID NOT NULL, PRIMARY KEY (id))');
         $this->addSql('CREATE INDEX IDX_1F1B251EB1E7706E ON item (restaurant_id)');
         $this->addSql('CREATE TABLE item_category (item_id UUID NOT NULL, category_id UUID NOT NULL, PRIMARY KEY (item_id, category_id))');
         $this->addSql('CREATE INDEX IDX_6A41D10A126F525E ON item_category (item_id)');

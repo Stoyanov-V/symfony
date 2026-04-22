@@ -12,12 +12,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class UpdateItemRequestDto implements EntityMappableInterface
 {
     /**
+     * @param  array<string, string>|null  $name
+     * @param  array<string, string>|null  $description
      * @param array<string>|null $categoryIds
      */
     public function __construct(
         #[Assert\NotBlank(groups: ['item:put'])]
-        #[Assert\Length(min: 2, max: 255, groups: ['item:put', 'item:patch'])]
-        public ?string $name = null,
+        #[Assert\Type('array', groups: ['item:put', 'item:patch'])]
+        #[Assert\Count(min: 1, groups: ['item:put', 'item:patch'])]
+        #[Assert\All([
+            new Assert\Type('string'),
+            new Assert\Length(min: 2, max: 255)
+        ], groups: ['item:put', 'item:patch'])]
+        public ?array $name = null,
 
         #[Assert\NotBlank(groups: ['item:put'])]
         #[Assert\PositiveOrZero(groups: ['item:put', 'item:patch'])]
@@ -26,8 +33,12 @@ final class UpdateItemRequestDto implements EntityMappableInterface
         #[Assert\NotBlank(groups: ['item:put'])]
         public ?Uuid $restaurantId = null,
 
-        #[Assert\Length(max: 2000, groups: ['item:put', 'item:patch'])]
-        public ?string $description = null,
+        #[Assert\Type('array', groups: ['item:put', 'item:patch'])]
+        #[Assert\All([
+            new Assert\Type('string'),
+            new Assert\Length(max: 2000)
+        ], groups: ['item:put', 'item:patch'])]
+        public ?array $description = null,
 
         #[Assert\All([new Assert\Uuid()], groups: ['item:put', 'item:patch'])]
         public ?array $categoryIds = null,

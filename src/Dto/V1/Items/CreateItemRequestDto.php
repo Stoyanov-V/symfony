@@ -9,12 +9,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 final readonly class CreateItemRequestDto
 {
     /**
+     * @param  array<string, string>  $name
+     * @param  array<string, string>|null  $description
      * @param array<string>|null $categoryIds
      */
     public function __construct(
         #[Assert\NotBlank]
-        #[Assert\Length(min: 2, max: 255)]
-        public string $name,
+        #[Assert\Type('array')]
+        #[Assert\Count(min: 1)]
+        #[Assert\All([
+            new Assert\Type('string'),
+            new Assert\Length(min: 2, max: 255)
+        ])]
+        public array $name,
 
         #[Assert\NotBlank]
         #[Assert\PositiveOrZero]
@@ -23,8 +30,12 @@ final readonly class CreateItemRequestDto
         #[Assert\NotBlank]
         public Uuid $restaurantId,
 
-        #[Assert\Length(max: 2000)]
-        public ?string $description = null,
+        #[Assert\Type('array')]
+        #[Assert\All([
+            new Assert\Type('string'),
+            new Assert\Length(max: 2000)
+        ])]
+        public ?array $description = null,
 
         #[Assert\All([new Assert\Uuid()])]
         public ?array $categoryIds = null,

@@ -17,18 +17,26 @@ final class ItemFactory extends PersistentObjectFactory
 {
     /**
      * @return array{
-     *     name: string,
-     *     price: float,
-     *     description: ?string,
-     *     restaurant: LazyValue
+     *  name: array{en: string, de: string, bg: string},
+     *  price: float,
+     *  description: array{en: string, de: string, bg: string}|null,
+     *  restaurant: LazyValue
      * }
      */
     protected function defaults(): array
     {
         return [
-            'name' => (string) self::faker()->words(2, true),
+            'name' => [
+                'en' => self::faker()->words(2, true),
+                'de' => self::faker()->words(2, true),
+                'bg' => self::faker()->words(2, true),
+            ],
             'price' => self::faker()->randomFloat(2, 10, 100),
-            'description' => rand(0, 1) ? self::faker()->sentence(10) : null,
+            'description' => rand(0, 1) ? [
+                'en' => self::faker()->sentence(10),
+                'de' => self::faker()->sentence(10),
+                'bg' => self::faker()->sentence(10),
+            ] : null,
             'restaurant' => lazy(fn() => RestaurantFactory::random()),
         ];
     }

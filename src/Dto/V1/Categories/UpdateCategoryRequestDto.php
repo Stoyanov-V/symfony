@@ -11,10 +11,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class UpdateCategoryRequestDto implements EntityMappableInterface
 {
+    /**
+     * @param array<string, string>|null $name
+     */
     public function __construct(
-        #[Assert\NotBlank]
-        #[Assert\Length(min: 2, max: 255, groups: ['put', 'patch'])]
-        public ?string $name = null,
+        #[Assert\NotBlank(groups: ['put', 'patch'])]
+        #[Assert\Type('array', groups: ['put', 'patch'])]
+        #[Assert\Count(min: 1, groups: ['put', 'patch'])]
+        #[Assert\All([
+            new Assert\Type('string'),
+            new Assert\Length(min: 2, max: 255)
+        ], groups: ['put', 'patch'])]
+        public ?array $name = null,
 
         #[Assert\NotBlank(groups: ['put'])]
         public ?Uuid $restaurantId = null,

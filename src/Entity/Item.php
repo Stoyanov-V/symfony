@@ -50,15 +50,18 @@ class Item
     ])]
     private(set) Collection $categories;
 
-    #[ORM\Column(length: 255)]
+    /** @var array<string, string> */
+    #[ORM\Column(type: Types::JSON)]
     #[Groups([
         'item:read',
         'item:write',
         'restaurant:read:with-items',
         'category:read:with-items',
     ])]
-    public string $name {
-        set => $this->name = trim($value);
+    public array $name = [] {
+        set {
+            $this->name = array_map(trim(...), $value);
+        }
     }
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
@@ -77,14 +80,15 @@ class Item
         }
     }
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    /** @var array<string, string>|null */
+    #[ORM\Column(type: Types::JSON, nullable: true)]
     #[Groups([
         'item:read',
         'item:write',
         'restaurant:read:with-items',
         'category:read:with-items',
     ])]
-    public ?string $description = null;
+    public ?array $description = null;
 
     public function __construct()
     {
