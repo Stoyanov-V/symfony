@@ -38,6 +38,7 @@ final class ItemsController extends AbstractController
         $items = $filter
             ->set($queryDto, $repository->createQueryBuilder('i'))
             ->filter()
+            ->search()
             ->sort()
             ->paginate();
 

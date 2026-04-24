@@ -15,6 +15,8 @@ final class UserFilter extends ApiFilter
 
     protected array $sortable = ['name'];
 
+    protected array $searchable = ['name', 'email'];
+
     protected array $context = [
         'default' => 'user:read',
         'restaurants' => 'user:read:with-restaurants',

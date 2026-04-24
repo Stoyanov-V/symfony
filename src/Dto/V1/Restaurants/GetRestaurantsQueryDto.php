@@ -13,10 +13,10 @@ final class GetRestaurantsQueryDto extends GetQueryDto
      */
     public function __construct(
         public ?array $name = null,
-        ?string $sort = null,
-        ?string $include = null,
-    )
-    {
-        parent::__construct($sort, $include);
+        public ?string $sort = null,
+        public ?string $include = null,
+        public ?string $q = null,
+    ) {
+        parent::__construct($sort, $include, $q);
     }
 }

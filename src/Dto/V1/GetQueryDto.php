@@ -9,6 +9,7 @@ class GetQueryDto
     public function __construct(
         public ?string $sort = null,
         public ?string $include = null,
+        public ?string $q = null,
         public int $perPage = 25,
         public int $page = 1,
     ) {

@@ -40,6 +40,7 @@ final class RestaurantsController extends AbstractController
         $restaurants = $filter
             ->set($restaurantsQueryDto, $repository->createQueryBuilder('r'))
             ->filter()
+            ->search()
             ->sort()
             ->paginate();
 

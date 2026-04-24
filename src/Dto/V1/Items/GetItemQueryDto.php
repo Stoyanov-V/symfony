@@ -8,11 +8,12 @@ final class GetItemQueryDto extends GetQueryDto
 {
     /**
      * @param  array<string, string>|null  $name
-     * @param  array<string, string>|null $price
-     * @param  array<string, string>|null $category
-     * @param  array<string, string>|null $restaurant
+     * @param  array<string, string>|null  $price
+     * @param  array<string, string>|null  $category
+     * @param  array<string, string>|null  $restaurant
      * @param  string|null  $sort
      * @param  string|null  $include
+     * @param  string|null  $q
      */
     public function __construct(
         public ?array $name = null,
@@ -21,7 +22,8 @@ final class GetItemQueryDto extends GetQueryDto
         public ?array $restaurant = null,
         public ?string $sort = null,
         public ?string $include = null,
+        public ?string $q = null,
     ) {
-        parent::__construct($sort, $include);
+        parent::__construct($sort, $include, $q);
     }
 }

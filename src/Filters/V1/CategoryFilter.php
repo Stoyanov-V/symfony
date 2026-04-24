@@ -16,6 +16,8 @@ final class CategoryFilter extends ApiFilter
 
     protected array $translatable = ['name'];
 
+    protected array $searchable = ['name'];
+
     protected array $context = [
         'default' => 'category:read',
         'restaurant' => 'category:read:with-restaurant',

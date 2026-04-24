@@ -39,6 +39,7 @@ final class UsersController extends AbstractController
         $users = $filter
             ->set($userQueryDto, $repository->createQueryBuilder('u'))
             ->filter()
+            ->search()
             ->sort()
             ->paginate();
 

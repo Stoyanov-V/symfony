@@ -39,6 +39,7 @@ final class CategoriesController extends AbstractController
         $categories = $filter
             ->set($queryDto, $repository->createQueryBuilder('c'))
             ->filter()
+            ->search()
             ->sort()
             ->paginate();
 

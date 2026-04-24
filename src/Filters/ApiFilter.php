@@ -28,6 +28,9 @@ class ApiFilter
     /** @var array<string> */
     protected array $translatable = [];
 
+    /** @var array<string> */
+    protected array $searchable = [];
+
     /** @var array<string, string> */
     protected array $operatorMap = [
         'eq' => '=',
@@ -117,6 +120,29 @@ class ApiFilter
         return $this;
     }
 
+    public function search(): static
+    {
+        if (empty($this->dto->q)) {
+            return $this;
+        }
+
+        $searchTerm = strtolower('%' . $this->dto->q . '%');
+
+        foreach ($this->searchable as $field) {
+            if (in_array($field, $this->translatable, true)) {
+
+                $this->queryBuilder->orWhere("LOWER(JSON_GET_TEXT($this->rootAlias.$field, :locale)) LIKE :searchTerm")
+                    ->setParameter('locale', $this->getLocale())
+                    ->setParameter('searchTerm', $searchTerm);
+            } else {
+                $this->queryBuilder->orWhere("LOWER($this->rootAlias.$field) LIKE :searchTerm")
+                    ->setParameter('searchTerm', $searchTerm);
+            }
+        }
+
+        return $this;
+    }
+
     /**
      * @return array{
      *     data: ArrayIterator<int, object>,
@@ -173,7 +199,7 @@ class ApiFilter
         return $context;
     }
 
-    //TODO: search filtering, user restriction by restaurant, tests, images, api cache
+    //TODO: user restriction by restaurant, tests, images, api cache
 
     /**
      * @return array<object>

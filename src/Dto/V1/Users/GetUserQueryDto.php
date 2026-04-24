@@ -19,8 +19,8 @@ final class GetUserQueryDto extends GetQueryDto
         public ?array $email = null,
         public ?string $sort = null,
         public ?string $include = null,
-    )
-    {
-        parent::__construct($sort, $include);
+        public ?string $q = null,
+    ) {
+        parent::__construct($sort, $include, $q);
     }
 }

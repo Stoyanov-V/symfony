@@ -14,6 +14,8 @@ final class RestaurantFilter extends ApiFilter
 
     protected array $sortable = ['name'];
 
+    protected array $searchable = ['name'];
+
     protected array $context = [
         'default' => 'restaurant:read',
         'users' => 'restaurant:read:with-users',
