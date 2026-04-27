@@ -14,7 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{Response, JsonResponse};
-use Symfony\Component\HttpKernel\Attribute\{MapQueryString, MapRequestPayload};
+use Symfony\Component\HttpKernel\Attribute\{Cache, MapQueryString, MapRequestPayload};
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
@@ -31,6 +31,7 @@ final class RestaurantsController extends AbstractController
      * @throws Exception
      */
     #[Route('/', name: 'index', methods: ['GET'])]
+    #[Cache(maxage: 60, smaxage: 3600, public: true)]
     public function index(
         #[MapQueryString] GetRestaurantsQueryDto $restaurantsQueryDto,
         RestaurantRepository $repository,
@@ -51,6 +52,7 @@ final class RestaurantsController extends AbstractController
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
+    #[Cache(maxage: 60, smaxage: 3600, public: true)]
     public function show(
         Restaurant $restaurant,
         #[MapQueryString] GetRestaurantsQueryDto $queryDto,
